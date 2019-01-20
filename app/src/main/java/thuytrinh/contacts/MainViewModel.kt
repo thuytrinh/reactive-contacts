@@ -26,7 +26,10 @@ class MainViewModel(
       .map {
         when (it) {
           is None -> emptyList()
-          is Some -> it.value.map { x -> x.asContact() }
+          is Some -> it.value
+            .map { x -> x.asContact() }
+            // To put favorite contacts on top.
+            .sortedByDescending { x -> x.isStarred }
         }
       }
       .subscribe(contacts::postValue)

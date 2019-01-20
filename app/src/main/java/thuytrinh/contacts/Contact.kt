@@ -13,8 +13,10 @@ data class Contact(
 fun Cursor.asContact(): Contact {
   val id: String = getString(getColumnIndex(Contacts._ID))
   val name: String? = getString(getColumnIndex(Contacts.DISPLAY_NAME))
+  val isStarred = getInt(getColumnIndex(Contacts.STARRED)) == 1
   return Contact(
     id = id,
-    name = name
+    name = name,
+    isStarred = isStarred
   )
 }

@@ -26,6 +26,18 @@ class MainActivity : AppCompatActivity() {
     )[MainViewModel::class.java]
     binding.viewModel = viewModel
 
+    checkContactsPermission(viewModel)
+
+    val contactsAdapter = ContactsAdapter()
+    binding.contactsView.layoutManager = LinearLayoutManager(this)
+    binding.contactsView.adapter = contactsAdapter
+
+    viewModel.contacts.observe(this, Observer { contacts ->
+      contactsAdapter.submitList(contacts)
+    })
+  }
+
+  private fun checkContactsPermission(viewModel: MainViewModel) {
     Dexter.withActivity(this)
       .withPermission(Manifest.permission.READ_CONTACTS)
       .withListener(object : PermissionListener {
@@ -42,13 +54,5 @@ class MainActivity : AppCompatActivity() {
         override fun onPermissionDenied(response: PermissionDeniedResponse?) {}
       })
       .check()
-
-    val contactsAdapter = ContactsAdapter()
-    binding.contactsView.layoutManager = LinearLayoutManager(this)
-    binding.contactsView.adapter = contactsAdapter
-
-    viewModel.contacts.observe(this, Observer { contacts ->
-      contactsAdapter.submitList(contacts)
-    })
   }
 }
