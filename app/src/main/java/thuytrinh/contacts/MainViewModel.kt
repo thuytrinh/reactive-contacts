@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.gojuno.koptional.None
 import com.gojuno.koptional.Some
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 
 class MainViewModel(
   private val contentResolver: ReactiveContentResolver
@@ -27,6 +28,7 @@ class MainViewModel(
             .sortedByDescending { x -> x.isStarred }
         }
       }
+      .subscribeOn(Schedulers.io())
       .subscribe(contacts::postValue)
   }
 
