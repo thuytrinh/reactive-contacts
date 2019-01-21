@@ -15,7 +15,7 @@ class ReactiveContentResolver(
 ) {
   fun query(
     contentUri: Uri,
-    projection: Array<String>
+    projection: Array<String> = emptyArray()
   ): Observable<Optional<Cursor>> {
     fun query() = Observable.fromCallable {
       val cursor = contentResolver.query(

@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.gojuno.koptional.None
 import com.gojuno.koptional.Some
+import io.reactivex.disposables.Disposable
 
 class MainViewModel(
   private val contentResolver: ReactiveContentResolver
@@ -12,17 +13,11 @@ class MainViewModel(
   val contacts = MutableLiveData<List<Contact>>().also {
     it.value = emptyList()
   }
+  private var disposable: Disposable? = null
 
   fun loadContacts() {
-    val disposable = contentResolver
-      .query(
-        contentUri = ContactsContract.Contacts.CONTENT_URI,
-        projection = arrayOf(
-          ContactsContract.Contacts._ID,
-          ContactsContract.Contacts.DISPLAY_NAME_PRIMARY,
-          ContactsContract.Contacts.STARRED
-        )
-      )
+    disposable = contentResolver
+      .query(contentUri = ContactsContract.Contacts.CONTENT_URI)
       .map {
         when (it) {
           is None -> emptyList()
@@ -33,5 +28,9 @@ class MainViewModel(
         }
       }
       .subscribe(contacts::postValue)
+  }
+
+  override fun onCleared() {
+    disposable?.dispose()
   }
 }
